@@ -8,11 +8,16 @@
 import SwiftUI
 
 struct ContentView: View {
-    private var viewModel = ContentViewModel()
+    @ObservedObject private var viewModel = ContentViewModel()
 
     var body: some View {
         List(viewModel.repos) {
             repoCard($0)
+        }
+        .task {
+            Task {
+                await viewModel.load()
+            }
         }
     }
 }
@@ -21,7 +26,7 @@ private extension ContentView {
     func repoCard(_ repo: Repository) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 10) {
-                AsyncImage(url: repo.owner.imageURL) { result in
+                AsyncImage(url: URL(string: repo.owner.imageURL)!) { result in
                     result.image?
                         .resizable()
                         .scaledToFill()
@@ -37,11 +42,12 @@ private extension ContentView {
 
                 Spacer()
 
-                Text("\(repo.numberOfStars)")
+                Text("23")
+//                Text("\(repo.numberOfStars)")
                     .bold()
             }
 
-            Text(attributedDescription(repo.description) ?? "Failed to fetch data")
+            Text(attributedDescription(repo.description ?? "N/A") ?? "Failed to fetch data")
                 .lineLimit(2)
         }
         .padding(.vertical, 10)

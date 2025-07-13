@@ -39,6 +39,7 @@ extension APIRequest {
     func buildURLRequest() throws -> URLRequest {
         // 1. Create a URLComponents
         var components = URLComponents(string: baseURL.absoluteString)
+        components?.path = path
         if let queries {
             components?.queryItems = queries.map { key, value in
                 URLQueryItem(name: key, value: value)

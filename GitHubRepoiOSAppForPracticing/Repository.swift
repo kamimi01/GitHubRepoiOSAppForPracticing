@@ -10,12 +10,17 @@ import Foundation
 struct Repository: Codable, Identifiable {
     var id: String { UUID().uuidString }
     let name: String
-    let numberOfStars: Int
+//    let numberOfStars: Int = 100
     let owner: User
-    let description: String
+    let description: String?
 }
 
 struct User: Codable {
     let name: String
-    let imageURL: URL
+    let imageURL: String
+
+    enum CodingKeys: String, CodingKey {
+        case name = "login"
+        case imageURL = "avatar_url"
+    }
 }

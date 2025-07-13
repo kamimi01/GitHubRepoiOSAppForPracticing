@@ -8,8 +8,36 @@
 import Foundation
 
 final class ContentViewModel: ObservableObject {
-    @Published var repos: [Repository] = [
-        Repository(name: "grit", numberOfStars: 23, owner: User(name: "mojombo", imageURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4")!), description: "**Grit is no longer maintained. Check out libgit2/rugged.** Grit gives you object oriented read/write access to Git repositories via Ruby."),
-        Repository(name: "merb-core", numberOfStars: 34, owner: User(name: "wycats", imageURL: URL(string: "https://avatars.githubusercontent.com/u/4?v=4")!), description: "Merb Core: All you need. None you don't.")
-    ]
+    @Published var repos: [Repository] = []
+
+    func load() async {
+        let request = RepositoryListRequest()
+
+        do {
+            let urlRequest = try request.buildURLRequest()
+            // FIXME: implement this somewhere else
+            let (data, response) = try await URLSession.shared.data(for: urlRequest)
+
+            if let httpResponse = response as? HTTPURLResponse {
+                switch httpResponse.statusCode {
+                case (0...299):
+                    print("do nothing")
+                // FIXME: implement more patterns like 300, 400, 500
+                default:
+                    // FIXME: implement error
+                    print("status code is not 0 to 299: \(httpResponse.statusCode)")
+                }
+            }
+
+            let decorder = JSONDecoder()
+            let repos = try decorder.decode([Repository].self, from: data)
+
+            await MainActor.run { [weak self] in
+                self?.repos = repos
+            }
+        } catch {
+            // FIXME: implement error
+            print(error)
+        }
+    }
 }
