@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct Repository: Codable {
+struct Repository: Codable, Identifiable {
+    var id: String { UUID().uuidString }
     let name: String
     let numberOfStars: Int
     let owner: User
