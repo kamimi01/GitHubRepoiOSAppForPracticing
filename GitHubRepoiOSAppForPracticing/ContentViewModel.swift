@@ -13,7 +13,7 @@ final class ContentViewModel: ObservableObject {
     func load() async {
         do {
             let client = GitHubClient()
-            let request = RepositoryListRequest()
+            let request = GitHubAPI.RepositoryList()
             let repos = try await client.send(request: request)
 
             await MainActor.run { [weak self] in
