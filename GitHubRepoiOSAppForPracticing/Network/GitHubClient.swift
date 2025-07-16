@@ -8,11 +8,8 @@
 import Foundation
 
 enum GitHubClientError: Error {
-    case failedToConvertHTTPURLResponse
-    case redirectionNeeded
-    case invalidRequest
-    case server
-    case unexpected
+    case connection
+    case unexpected(statusCode: Int)
 }
 
 final class GitHubClient {
@@ -32,22 +29,18 @@ final class GitHubClient {
 
         let (data, response) = try await session.data(for: urlRequest)
 
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw GitHubClientError.failedToConvertHTTPURLResponse
+        try validate(data: data, response: response)
+
+        return try decorder.decode(Request.response.self, from: data)
+    }
+
+    private func validate(data: Data, response: URLResponse) throws {
+        guard let statusCode = (response as? HTTPURLResponse)?.statusCode else {
+            throw GitHubClientError.connection
         }
 
-        switch httpResponse.statusCode {
-        case (0...299):
-            let response = try decorder.decode(Request.response.self, from: data)
-            return response
-        case (300...399):
-            throw GitHubClientError.redirectionNeeded
-        case (400...499):
-            throw GitHubClientError.invalidRequest
-        case (500...599):
-            throw GitHubClientError.server
-        default:
-            throw GitHubClientError.unexpected
+        if !(200...299).contains(statusCode) {
+            throw GitHubClientError.unexpected(statusCode: statusCode)
         }
     }
 }
