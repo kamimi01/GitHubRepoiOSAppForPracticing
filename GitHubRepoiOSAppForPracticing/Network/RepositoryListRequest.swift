@@ -8,6 +8,8 @@
 import Foundation
 
 struct RepositoryListRequest: APIRequest {
+    typealias response = [Repository]
+
     var path: String = "/repositories"
     var httpMethod: HttpMethod = .get
 }

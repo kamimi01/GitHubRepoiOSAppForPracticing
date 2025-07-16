@@ -10,6 +10,8 @@ import Foundation
 // 1. Create a protocol of URLRequest
 
 protocol APIRequest {
+    associatedtype response: Codable
+
     // If I wanna put default implementations for baseURL or something, need to put only `get` no `set`
     var baseURL: URL { get }
     var path: String { get set }
