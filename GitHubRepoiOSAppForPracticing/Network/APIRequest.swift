@@ -53,6 +53,7 @@ extension APIRequest {
         // 3. Create URLRequest instance
         var request = URLRequest(url: url)
         request.httpMethod = httpMethod.rawValue
+        // Don't use allHTTPHeaderFields because this API will reset the header fields not add.
         headers.forEach { key, value in
             request.setValue(value, forHTTPHeaderField: key)
         }
