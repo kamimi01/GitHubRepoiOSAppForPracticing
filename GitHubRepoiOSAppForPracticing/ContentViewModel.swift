@@ -12,9 +12,9 @@ final class ContentViewModel: ObservableObject {
 
     func load() async {
         do {
-            let responseCreator = ResponseCreator<RepositoryListRequest>()
+            let client = GitHubClient()
             let request = RepositoryListRequest()
-            let repos = try await responseCreator.createResponse(for: request)
+            let repos = try await client.send(request: request)
 
             await MainActor.run { [weak self] in
                 self?.repos = repos
