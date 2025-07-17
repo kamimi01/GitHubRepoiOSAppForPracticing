@@ -9,6 +9,8 @@ import Foundation
 
 final class ContentViewModel: ObservableObject {
     @Published var repos: [Repository] = []
+    @Published var searchText: String = ""
+
     private let client = GitHubClient()
 
     func load() async {
@@ -25,9 +27,17 @@ final class ContentViewModel: ObservableObject {
         }
     }
 
-//    func search() async {
-//        do {
-//            let request = GitHubAPI.SearchRepository(with: <#T##String#>)
-//        }
-//    }
+    func search() async {
+        do {
+            let request = GitHubAPI.SearchRepository(with: searchText)
+            let repos = try await client.send(request: request)
+
+            await MainActor.run { [weak self] in
+                self?.repos = repos.items
+            }
+        } catch {
+            // FIXME: implement error
+            print(error)
+        }
+    }
 }

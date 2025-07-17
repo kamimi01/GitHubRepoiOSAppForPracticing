@@ -11,12 +11,20 @@ struct ContentView: View {
     @ObservedObject private var viewModel = ContentViewModel()
 
     var body: some View {
-        List(viewModel.repos) {
-            repoCard($0)
+        NavigationStack {
+            List(viewModel.repos) {
+                repoCard($0)
+            }
+            .task {
+                Task {
+                    await viewModel.load()
+                }
+            }
         }
-        .task {
+        .searchable(text: $viewModel.searchText, prompt: "repo, owner, description")
+        .onSubmit(of: .search) {
             Task {
-                await viewModel.load()
+                await viewModel.search()
             }
         }
     }

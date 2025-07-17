@@ -17,7 +17,7 @@ final class GitHubAPI {
     }
 
     struct SearchRepository: APIRequest {
-        typealias response = [Repository]
+        typealias response = SearchedRepository
 
         var path: String = "/search/repositories"
         var httpMethod: HttpMethod = .get
