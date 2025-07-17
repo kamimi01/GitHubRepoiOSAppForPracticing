@@ -17,7 +17,7 @@ protocol APIRequest {
     var path: String { get set }
     var httpMethod: HttpMethod { get set }
     var headers: [String: String] { get }
-    var queries: [String: String]? { get }
+    var queries: [String: String]? { get set }
 }
 
 enum URLRequestError: Error {
@@ -32,10 +32,6 @@ extension APIRequest {
     var headers: [String: String] {
         ["Accept": "application/vnd.github+json",
          "X-GitHub-Api-Version": "2022-11-28"]
-    }
-
-    var queries: [String: String]? {
-        nil
     }
 
     func buildURLRequest() throws -> URLRequest {

@@ -9,10 +9,10 @@ import Foundation
 
 final class ContentViewModel: ObservableObject {
     @Published var repos: [Repository] = []
+    private let client = GitHubClient()
 
     func load() async {
         do {
-            let client = GitHubClient()
             let request = GitHubAPI.RepositoryList()
             let repos = try await client.send(request: request)
 
@@ -24,4 +24,10 @@ final class ContentViewModel: ObservableObject {
             print(error)
         }
     }
+
+//    func search() async {
+//        do {
+//            let request = GitHubAPI.SearchRepository(with: <#T##String#>)
+//        }
+//    }
 }

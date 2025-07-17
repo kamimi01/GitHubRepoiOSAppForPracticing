@@ -13,5 +13,18 @@ final class GitHubAPI {
 
         var path: String = "/repositories"
         var httpMethod: HttpMethod = .get
+        var queries: [String : String]? = nil
+    }
+
+    struct SearchRepository: APIRequest {
+        typealias response = [Repository]
+
+        var path: String = "/search/repositories"
+        var httpMethod: HttpMethod = .get
+        var queries: [String : String]?
+
+        init(with word: String) {
+            self.queries = ["q": word]
+        }
     }
 }
